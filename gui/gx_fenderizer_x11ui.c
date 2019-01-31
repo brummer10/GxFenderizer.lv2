@@ -310,7 +310,7 @@ static LV2UI_Handle instantiate(const struct _LV2UI_Descriptor * descriptor,
 
 	if (resize){
 		ui->resize = resize;
-		resize->ui_resize(resize->handle, ui->width*0.9, ui->height);
+		resize->ui_resize(resize->handle, ui->width*0.9, ui->height*0.9);
 	}
 
 	ui->rescale.x  = (double)ui->width/ui->init_width;
