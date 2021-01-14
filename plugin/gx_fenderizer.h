@@ -38,6 +38,7 @@ typedef enum
    MID, 
    TREBLE, 
    VOLUME, 
+   CLEAN,
 } PortIndex;
 
 #endif //SRC_HEADERS_GXEFFECTS_H_

@@ -24,7 +24,7 @@
 -----------------------------------------------------------------------
 ----------------------------------------------------------------------*/
 
-#define CONTROLS 6
+#define CONTROLS 7
 
 /*---------------------------------------------------------------------
 -----------------------------------------------------------------------	
@@ -222,7 +222,7 @@ cairo_surface_t *cairo_image_surface_create_from_stream (gx_fenderizerUI* ui, co
 ----------------------------------------------------------------------*/
 
 // init the xwindow and return the LV2UI handle
-static LV2UI_Handle instantiate(const struct _LV2UI_Descriptor * descriptor,
+static LV2UI_Handle instantiate(const LV2UI_Descriptor * descriptor,
 			const char * plugin_uri, const char * bundle_path,
 			LV2UI_Write_Function write_function,
 			LV2UI_Controller controller, LV2UI_Widget * widget,
@@ -261,11 +261,12 @@ static LV2UI_Handle instantiate(const struct _LV2UI_Descriptor * descriptor,
 	}
 
 	ui->controls[0] = (gx_controller) {{1.0, 1.0, 0.0, 1.0, 1.0}, {40, 70, 81, 81}, false,"POWER", BSWITCH, BYPASS};
-	ui->controls[1] = (gx_controller) {{0.5, 0.5, 0.0, 1.0, 0.01}, {170, 70, 81, 81}, false,"BASS", KNOB, BASS};
-	ui->controls[2] = (gx_controller) {{0.5, 0.5, 0.0, 1.0, 0.01}, {290, 70, 81, 81}, false,"MID", KNOB, MID};
-	ui->controls[3] = (gx_controller) {{0.5, 0.5, 0.0, 1, 0.01}, {410, 70, 81, 81}, false,"TREBLE", KNOB, TREBLE};
-	ui->controls[4] = (gx_controller) {{0.15, 0.15, 0.0, 1, 0.01}, {530, 70, 81, 81}, false,"VOLUME", KNOB, VOLUME};
-	ui->controls[5] = (gx_controller) {{0.0, 0.0, 0.0, 1, 1.0}, {630, 70, 81, 81}, false,"CHANNEL", SWITCH, BRIGHT};
+	ui->controls[1] = (gx_controller) {{0.0, 0.0, 0.0, 1, 1.0}, {130, 70, 81, 81}, false,"MODE", ENUM, CLEAN};
+	ui->controls[2] = (gx_controller) {{0.5, 0.5, 0.0, 1.0, 0.01}, {240, 70, 81, 81}, false,"BASS", KNOB, BASS};
+	ui->controls[3] = (gx_controller) {{0.5, 0.5, 0.0, 1.0, 0.01}, {350, 70, 81, 81}, false,"MID", KNOB, MID};
+	ui->controls[4] = (gx_controller) {{0.5, 0.5, 0.0, 1, 0.01}, {450, 70, 81, 81}, false,"TREBLE", KNOB, TREBLE};
+	ui->controls[5] = (gx_controller) {{0.15, 0.15, 0.0, 1, 0.01}, {560, 70, 81, 81}, false,"VOLUME", KNOB, VOLUME};
+	ui->controls[6] = (gx_controller) {{0.0, 0.0, 0.0, 1, 1.0}, {650, 70, 81, 81}, false,"CHANNEL", SWITCH, BRIGHT};
 	ui->start_value = 0.0;
 
 	ui->pedal = cairo_image_surface_create_from_stream(ui, LDVAR(pedal_png));
@@ -367,8 +368,8 @@ static void knob_expose(gx_fenderizerUI *ui,gx_controller* knob) {
 		knob_x = grow-45;
 		knob_y = grow-45; 
 	} else if (knob->type == ENUM) {
-		knob_x = grow-25;
-		knob_y = grow-25; 
+		knob_x = grow-45;
+		knob_y = grow-45; 
 	} else {
 		knob_x = grow-1;
 		knob_y = grow-1;
@@ -481,20 +482,23 @@ static void knob_expose(gx_fenderizerUI *ui,gx_controller* knob) {
 		cairo_show_text(ui->crf, "Bright");
 		cairo_new_path (ui->crf);
 	} else if (knob->type == ENUM) {
+		cairo_set_font_size (ui->crf, 10.0);
+		if(knob->adj.value)
 		cairo_set_source_rgba (ui->crf, 0.6, 0.6, 0.6,1.0);
-		cairo_text_extents(ui->crf,"1", &extents);
-		cairo_move_to (ui->crf, knobx1-knob_x/2.4-extents.width/1.6, knoby1+knob_y/2+extents.height/1.4);
-		cairo_show_text(ui->crf, "1");
+		else
+		cairo_set_source_rgba (ui->crf, 0.73, 0.73, 0.73,1.0);
+		cairo_text_extents(ui->crf,"Crunch", &extents);
+		cairo_move_to (ui->crf, knobx1-knob_x/2.2-extents.width/1.6, knoby1+knob_y/1.4+extents.height/1.4);
+		cairo_show_text(ui->crf, "Crunch");
 		cairo_new_path (ui->crf);
 
-		cairo_text_extents(ui->crf,"2", &extents);
-		cairo_move_to (ui->crf, knobx1-extents.width/2, knoby1-knob_y/2-extents.height/2);
-		cairo_show_text(ui->crf, "2");
-		cairo_new_path (ui->crf);
-
-		cairo_text_extents(ui->crf,"3", &extents);
-		cairo_move_to (ui->crf, knobx1+knob_x/2.6-extents.width/2.3, knoby1+knob_y/2+extents.height/1.4);
-		cairo_show_text(ui->crf, "3");
+		if(!knob->adj.value)
+		cairo_set_source_rgba (ui->crf, 0.6, 0.6, 0.6,1.0);
+		else
+		cairo_set_source_rgba (ui->crf, 0.73, 0.73, 0.73,1.0);
+		cairo_text_extents(ui->crf,"Bright", &extents);
+		cairo_move_to (ui->crf, knobx1+knob_x/2.2-extents.width/2.3, knoby1+knob_y/1.5+extents.height/1.4);
+		cairo_show_text(ui->crf, "Clean");
 		cairo_new_path (ui->crf);
 	}
 	cairo_pattern_destroy (pat);
@@ -858,7 +862,7 @@ static void get_last_active_controller(gx_fenderizerUI *ui, bool set) {
 // map supported key's to integers or return zerro
 static int key_mapping(Display *dpy, XKeyEvent *xkey) {
 	if (xkey->keycode == XKeysymToKeycode(dpy,XK_Tab))
-		return (xkey->state == ShiftMask) ? 1 : 2;
+		return (xkey->state & ShiftMask) ? 1 : 2;
 	else if (xkey->keycode == XKeysymToKeycode(dpy,XK_Up))
 		return 3;
 	else if (xkey->keycode == XKeysymToKeycode(dpy,XK_Right))

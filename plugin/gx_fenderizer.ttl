@@ -131,6 +131,19 @@ rdfs:comment """
         lv2:default 0.15 ;
         lv2:minimum 0.0 ;
         lv2:maximum 1.0 ;
+    ]      , [
+        a lv2:InputPort ,
+            lv2:ControlPort ;
+        lv2:index 8 ;
+        lv2:symbol "CLEAN" ;
+        lv2:name "CLEAN" ;
+        lv2:default 0.0 ;
+        lv2:minimum 0.0 ;
+        lv2:maximum 1.0 ;
+        lv2:portProperty lv2:integer;
+        lv2:portProperty lv2:enumeration ;
+        lv2:scalePoint [rdfs:label "CRUNCH"; rdf:value 0];
+        lv2:scalePoint [rdfs:label "CLEAN"; rdf:value 1];
     ] .
 
 <http://guitarix.sourceforge.net/plugins/gx_fenderizer_gui#_fenderizer_>
